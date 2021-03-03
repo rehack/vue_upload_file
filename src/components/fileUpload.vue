@@ -3,21 +3,24 @@
  * @Author: yizheng.yuan
  * @Date: 2021-03-02 21:28:11
  * @LastEditors: yizheng.yuan
- * @LastEditTime: 2021-03-03 21:25:15
+ * @LastEditTime: 2021-03-03 21:58:00
 -->
 <!-- multiple多个文件上传 accept文件类型-->
 <template>
-  <div style="text-align: left; border: 1px solid red;">
-    <p>文件上传：</p>
-    <p>
-      上传人：<input v-model="name">
-    </p>
-    <p>
-      图片：<input type="file" name="file" @change="addFile" ref="inputer">
-    </p>
-    <p>
-      <el-button @click="send" type="primary" style="width: 100px;">上传</el-button>
-    </p>
+  <div style="text-align: left;">
+      <div style="border: 1px solid red;">
+          <p>文件上传：</p>
+            <p>
+            上传人：<input v-model="name">
+            </p>
+            <p>
+            图片：<input type="file" name="file" @change="addFile" ref="inputer">
+            </p>
+            <p>
+            <button @click="send" style="width: 100px;">上传</button>
+            </p>
+      </div>
+    
 
     <div>
       <el-upload
@@ -39,6 +42,32 @@
       accept="application/vnd.ms-powerpoint, application/vnd.openxmlformats-officedocument.presentationml.presentation, application/msword, application/vnd.openxmlformats-officedocument.wordprocessingml.document, application/pdf"
       <p>支持文件格式：.ppt .pptx .doc .docx .pdf ，单个文件不能超过20M.</p> 
     -->
+
+
+
+
+    <!-- Demo2 Test -->
+    <div style="border:1px solid blue;margin-top:100px;padding:20px;">
+        <el-form>
+            <div style="width:500px;margin:10px" v-for="(item,index) in dataList" :key="index">
+                <el-input v-model="item.name"></el-input>
+                <el-upload
+                    ref='upload'
+                    :auto-upload="false"
+                    action="#"
+                    multiple
+                    :http-request="uploadHandle"
+                    :on-change="handleChange"
+                    :file-list="item.files"
+                >
+                    <el-button slot="trigger" size="small" @click="currentIndexFUN(index)" type="primary">选择文件</el-button>
+                </el-upload>
+            </div>
+            <el-button @click="addItem">增加一组数据</el-button>
+            <el-button @click="delItem">删除一组数据</el-button>
+            <el-button @click="send2" type="primary">上传</el-button>
+        </el-form>
+    </div>
   </div>
 </template>
 
@@ -47,17 +76,17 @@
     data() {
       return {
         // 存放上传数据
+        currentIndex: 0,
         formData: new FormData(),
         file: {}, //文件数据  
         name: '', // 用户名
-        fileList: []
-        // fileList: [
-        //   {name: 'food.jpeg', 
-        //   url: 'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100'
-        // }, 
-        //   {name: 'food2.jpeg', 
-        //   url: 'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100'
-        // }]
+        fileList: [],
+        dataList:[
+            {
+                name: '',
+                files: [],
+            }
+        ]
       }
     },
     created(){
@@ -73,10 +102,15 @@
 
     },
     methods: {
+      currentIndexFUN(ind){
+        this.currentIndex = ind;
+        console.log('this.currentIndex',this.currentIndex);
+      },
       handleChange(file, fileList) {
-        console.log('file, fileList',file, fileList,this.fileList);
+        console.log('file, fileList',file, fileList,this.dataList);
+        this.dataList[this.currentIndex].files=fileList
         // this.fileList = fileList.slice(-3);
-        this.fileList.push(file)
+        // this.fileList.push(file)
       },
       submitUpload() {
         this.$refs.upload.submit();
@@ -126,6 +160,47 @@
             console.log("上传失败", err);
           });
 
+      },
+
+
+
+        // 手动上传
+      uploadHandle(param){
+          console.log(param);
+        //   如何append ??
+        // this.dataList[0].files.append('files[]', param.file) 
+
+      },
+      addItem(){
+        this.dataList.push(
+            {
+                name: '',
+                files: [],
+            }
+        )
+      },
+      delItem(){
+          this.dataList.pop()
+      },
+    //  发送给后台
+      send2(){
+        // this.$refs.upload.submit() // 触发自定义上传方法 手动上传 
+
+        var aa = this.dataList
+        console.log(aa);
+        this.$axios.post('/api/fileUpload',
+          aa,
+          {
+            headers: { "Content-Type": "multipart/form-data" }
+          }
+        )
+          .then(function (res) {
+            console.log('上传成功：', res);
+            alert('上传成功!')
+          })
+          .catch(function (err) {
+            console.log("上传失败", err);
+          });
       }
     }
   }
