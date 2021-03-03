@@ -1,7 +1,19 @@
+/*
+ * @Descripttion: 
+ * @Author: yizheng.yuan
+ * @Date: 2021-03-03 01:22:06
+ * @LastEditors: yizheng.yuan
+ * @LastEditTime: 2021-03-03 20:53:39
+ */
 import Vue from 'vue';
 import App from './App.vue';
 import router from './router';
 import store from './store';
+
+// element-ui
+import ElementUI from 'element-ui';
+import 'element-ui/lib/theme-chalk/index.css';
+Vue.use(ElementUI);
 
 
 import axios from 'axios'
