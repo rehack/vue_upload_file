@@ -91,7 +91,7 @@
     },
     created(){
 
-      this.$axios.get('http://localhost:9000/data0')
+      this.$axios.get('http://localhost:5000/data0')
           .then(function (res) {
             console.log('上传成功：', res);
             alert('上传成功!')
@@ -147,7 +147,7 @@
         //     console.log(error);
         //   });
         var aa = this.formData
-        this.$axios.post('http://localhost:9000/fileUpload',
+        this.$axios.post('http://localhost:5000/upload',
           aa,
           {
             headers: { "Content-Type": "multipart/form-data" }
@@ -188,7 +188,7 @@
 
         var aa = this.dataList
         console.log(aa);
-        this.$axios.post('/api/fileUpload',
+        this.$axios.post('/api/upload',
           aa,
           {
             headers: { "Content-Type": "multipart/form-data" }
